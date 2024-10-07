@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: kube-test
+  name: productgrpcserver-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: productgrpcserver
+  template:
+    metadata:
+      labels:
+        app: productgrpcserver
+    spec:
+      nodeSelector: 
+        "kubernetes.io/os": linux
+      containers:
+      - name: productgrpcserver
+        image: snacrdemo.azurecr.io/productgrpcservice:v1
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 8080
+        - containerPort: 8081
+        env: 
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Production"
+        - name: ASPNETCORE_URL
+          value: https://+:8081;http://+:8080
+        - name: SqlServerConnection
+          value: "server=sqlserver-service;database=northwind;user id=sa;password=AVery_str0ngPwd;trustservercertificate=true"
+        volumeMounts: 
+        - name: ssl 
+          mountPath: "/app/https"
+      volumes: 
+        - name: ssl
+          configMap: 
+            name: my-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: kube-test
+  name: productgrpcserver-service
+spec:
+  selector:
+    app: productgrpcserver
+  ports:
+  - name: tcp
+    port: 9000
+    targetPort: 8080
+    nodePort: 30080
+  type: NodePort
+  # - name: tcp
+  #   port: 9000
+  #   targetPort: 8080
+  # - name: https
+  #   port: 9001
+  #   targetPort: 8081
+  # type: LoadBalancer

@@ -1,0 +1,49 @@
+services:
+    sqlserver:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        container_name: sqlserver
+        hostname: sqlserver
+        restart: unless-stopped
+        environment:
+            MSSQL_SA_PASSWORD: "AVery_str0ngPwd"
+            ACCEPT_EULA: "Y"
+            MSSQL_ENABLE_HADR: 1
+            MSSQL_TCP_PORT: 1433
+            MSSQL_AGENT_ENABLED: true
+            MSSQL_DATA_DIR: /var/opt/mssql/data
+            MSSQL_DUMP_DIR: /var/opt/mssql/dump
+            MSSQL_LOG_DIR: /var/opt/mssql/log_data
+            MSSQL_BACKUP_DIR: /var/opt/mssql/backup_data
+            MSSQL_ERROR_LOG_FILE: /var/opt/mssql/log/errorlog
+        volumes:
+            - ./data:/var/opt/mssql/data
+            - ./log_data:/var/opt/mssql/log_data
+            - ./backup_data:/var/opt/mssql/backup_data
+            - ./dump:/var/opt/mssql/dump
+            - ./secrets:/var/opt/mssql/secrets
+            - ./logs:/var/opt/mssql/log
+        ports:
+            - "1433:1433"
+
+    productgrpcservice:
+        image: ${DOCKER_REGISTRY-}productgrpcservice
+        build:
+          context: .
+          dockerfile: ProductGrpcService/Dockerfile
+        environment:
+            ASPNETCORE_ENVIRONMENT: "Development"
+            ConnectionStrings__DefaultConnection: "Server=sqlserver;Database=Northwind;User Id=sa;Password=AVery_str0ngPwd;trustservercertificate=true;"
+            ASPNETCORE_URL: "http://+:80;https://+:443"
+        ports: 
+            - 8085:80 
+            - 8086:443
+        depends_on: 
+            - sqlserver
+
+volumes:
+  data:
+  log_data:
+  backup_data:
+  dump:
+  secrets:
+  logs:

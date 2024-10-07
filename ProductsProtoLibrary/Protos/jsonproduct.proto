@@ -1,0 +1,26 @@
+﻿syntax="proto3";
+
+
+import "protos/productmessages.proto";
+
+
+option csharp_namespace="ProductsProtoLibrary.Grpc";
+import "google/api/annotations.proto";
+
+package ProductsProtoLibrary;
+
+service ProductJsonService {
+   
+    rpc UnaryProductListing(FilterCriteriaInput) returns (ProductList) { 
+        option (google.api.http) = { 
+            post: "/api/products/list",
+            body: "*",
+            response_body: "products"
+        };
+    };
+    rpc UnaryGetProductDetails(DetailsInput) returns (Product) {
+       option (google.api.http) = { 
+            get: "/api/products/{product_id}"
+        };
+  };
+}

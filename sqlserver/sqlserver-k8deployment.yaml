@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+
+
+kind: Deployment
+metadata:
+  namespace: kube-test
+  name: sqlserver-deployment
+spec:
+  selector:
+    matchLabels:
+      app: sqlserver
+  template:
+    metadata:
+      labels:
+        app: sqlserver
+    spec:
+      containers:
+      - name: sqlserver
+        image: snacrdemo.azurecr.io/sqlserver:latest
+        resources:
+          requests:
+            memory: "2G"
+            cpu: "2000m"
+          limits:
+            memory: "2G"
+            cpu: "2000m"
+        ports:
+        - containerPort: 1433
+        env: 
+        - name: ACCEPT_EULA
+          value: "Y"
+        - name: MSSQL_SA_PASSWORD
+          value: "AVery_str0ngPwd"
+--- 
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: kube-test
+  name: sqlserver-service
+spec:
+  selector:
+    app: sqlserver
+  ports:
+  - port: 1433
+    targetPort: 1433
+  type: LoadBalancer
+
