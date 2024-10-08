@@ -24,11 +24,12 @@ spec:
             cpu: "500m"
         ports:
         - containerPort: 8080
+        - containerPort: 8081
         env: 
         - name: ASPNETCORE_ENVIRONMENT
           value: "Production"
         - name: ASPNETCORE_URL
-          value: http://+:8080
+          value: https://+:8081;http://+:8080
         - name: SqlServerConnection
           value: "server=sqlserver-service;database=northwind;user id=sa;password=AVery_str0ngPwd;trustservercertificate=true"
 ---
