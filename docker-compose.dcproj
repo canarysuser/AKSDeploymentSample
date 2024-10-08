@@ -12,6 +12,7 @@
     </None>
     <None Include="docker-compose.yml" />
     <None Include=".dockerignore" />
+    <None Include="productgrpcservice-k8deploymemnt - Copy.yaml" />
     <None Include="productgrpcservice-k8deploymemnt.local.yaml" />
     <None Include="productgrpcservice-k8deploymemnt.yaml" />
     <None Include="sqlserver\Dockerfile" />

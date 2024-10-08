@@ -24,14 +24,21 @@ spec:
             cpu: "500m"
         ports:
         - containerPort: 8080
+        - containerPort: 8081
         env: 
         - name: ASPNETCORE_ENVIRONMENT
           value: "Production"
         - name: ASPNETCORE_URL
-          value: http://+:8080
+          value: https://+:8081;http://+:8080
         - name: SqlServerConnection
           value: "server=sqlserver-service;database=northwind;user id=sa;password=AVery_str0ngPwd;trustservercertificate=true"
-        
+        volumeMounts: 
+        - name: ssl 
+          mountPath: "/app/https"
+      volumes: 
+        - name: ssl
+          configMap: 
+            name: my-config
 ---
 apiVersion: v1
 kind: Service
@@ -42,15 +49,15 @@ spec:
   selector:
     app: productgrpcserver
   ports:
-  # - name: tcp
-  #   port: 9000
-  #   targetPort: 8080
-  #   nodePort: 30080
-  # type: NodePort
   - name: tcp
     port: 9000
     targetPort: 8080
+    nodePort: 30080
+  type: NodePort
+  # - name: tcp
+  #   port: 9000
+  #   targetPort: 8080
   # - name: https
   #   port: 9001
   #   targetPort: 8081
-  type: LoadBalancer
+  # type: LoadBalancer
