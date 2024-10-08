@@ -31,7 +31,6 @@ spec:
           value: http://+:8080
         - name: SqlServerConnection
           value: "server=sqlserver-service;database=northwind;user id=sa;password=AVery_str0ngPwd;trustservercertificate=true"
-        
 ---
 apiVersion: v1
 kind: Service
